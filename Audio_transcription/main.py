@@ -40,28 +40,23 @@ polling_response = requests.get(polling_endpoint, headers=headers) # get request
 print(polling_response.json())
 
 # while loop for polling AssemblyAI
-#while True:
-    #polling_response = requests.get(polling_endpoint, headers=headers)
-    #if polling_response.json()['status'] == 'completed':
-        #print(polling_response.json())
-    #elif polling_response.json()['status'] == 'error':
-        #print('error')
-
-# writing transcripted text into text file
-if polling_response.json()['status'] == 'completed':
-        print(polling_response.json())
-        text_file = filename + '.txt'
-        response = polling_response.json()
-        # saving file
-        with open (text_file, 'w') as f:
-            f.write(response['text'])
-
-        print('Transcript saved')
-elif polling_response.json()['status'] == 'queued':
+while True:
+    polling_response = requests.get(polling_endpoint, headers=headers)
+    if polling_response.json()['status'] == 'queued':
+        print('Queued')
+    elif polling_response.json()['status'] == 'processing':
         print('Still processing')
+    elif polling_response.json()['status'] == 'error':
+        print('error')
+    elif polling_response.json()['status'] == 'completed':
+        print('completed')
+        break
 
-else:
-    print('I do not know')
+print(polling_response.json())
 
+# saving file
 
-
+response = polling_response.json()
+with open ('transcript.txt', 'w') as f:
+    f.write(response['text'])
+print('File succesfully saved!')
